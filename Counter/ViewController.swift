@@ -7,19 +7,26 @@
 
 import UIKit
 
-class ViewController: UIViewController {
-    var counter: Int = 0
-    var formattedDate: String {
+final class ViewController: UIViewController {
+    private var counter: Int = 0
+    
+    /// Скобки () в конце замыкания означают, что это замыкание немедленного действия.
+    /// Замыкание вызывается сразу при загрузке ViewController.
+    private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd.MM.yyyy HH:mm:ss"
-        return formatter.string(from: Date())
+        return formatter
+    }()
+    
+    private var formattedDate: String {
+        return dateFormatter.string(from: Date())
     }
 
-    @IBOutlet weak var counterLabel: UILabel!
-    @IBOutlet weak var plusButton: UIButton!
-    @IBOutlet weak var minusButton: UIButton!
-    @IBOutlet weak var resetButton: UIButton!
-    @IBOutlet weak var textView: UITextView!
+    @IBOutlet private weak var counterLabel: UILabel!
+    @IBOutlet private weak var plusButton: UIButton!
+    @IBOutlet private weak var minusButton: UIButton!
+    @IBOutlet private weak var resetButton: UIButton!
+    @IBOutlet private weak var textView: UITextView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,32 +38,31 @@ class ViewController: UIViewController {
     
     /// Прокручивает UITextView до самого низа, чтобы последние строки были видны.
     /// Вызывается при добавлении нового текста в textView, чтобы прокрутить к последней записи.
-    func scrollTextViewToBottom() {
+    private func scrollTextViewToBottom() {
         let range = NSMakeRange(textView.text.count, 0)
         textView.scrollRangeToVisible(range)
     }
     
-    @IBAction func increaseCounter(_ sender: Any) {
+    @IBAction private func increaseCounter(_ sender: Any) {
         counter += 1
         counterLabel.text = "Значение счётчика\n\(counter)"
         textView.text.append(contentsOf: "\(formattedDate): Значение изменено на +1\n")
         scrollTextViewToBottom()
     }
     
-    @IBAction func decreaseCounter(_ sender: Any) {
+    @IBAction private func decreaseCounter(_ sender: Any) {
         if counter > 0 {
             counter -= 1
             textView.text.append(contentsOf: "\(formattedDate): Значение изменено на -1\n")
-            scrollTextViewToBottom()
         } else {
             counter = 0
             textView.text.append(contentsOf: "\(formattedDate): Попытка уменьшить значение счётчика ниже 0\n")
-            scrollTextViewToBottom()
         }
+        scrollTextViewToBottom()
         counterLabel.text = "Значение счётчика\n\(counter)"
     }
     
-    @IBAction func resetCounter(_ sender: Any) {
+    @IBAction private func resetCounter(_ sender: Any) {
         counter = 0
         counterLabel.text = "Значение счётчика\n\(counter)"
         textView.text.append(contentsOf: "\(formattedDate): Значение сброшено\n")
