@@ -21,6 +21,9 @@ final class ViewController: UIViewController {
     private var formattedDate: String {
         return dateFormatter.string(from: Date())
     }
+    
+    private let counterKey = "counterValue"
+    private let historyKey = "historyText"
 
     @IBOutlet private weak var counterLabel: UILabel!
     @IBOutlet private weak var plusButton: UIButton!
@@ -30,10 +33,19 @@ final class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        //Загружаем значение счётчика
+        counter = UserDefaults.standard.integer(forKey: counterKey)
+        //Загружаем историю
+        textView.text = UserDefaults.standard.string(forKey: historyKey) ?? "История изменений:\n\n"
+        
         counterLabel.text = "Значение счётчика\n\(counter)"
         textView.isEditable = false
-        textView.text = "История изменений:\n\n"
+    }
+    
+    private func saveData() {
+        UserDefaults.standard.set(counter, forKey: counterKey)
+        UserDefaults.standard.set(textView.text, forKey: historyKey)
     }
     
     /// Прокручивает UITextView до самого низа, чтобы последние строки были видны.
@@ -48,6 +60,7 @@ final class ViewController: UIViewController {
         counterLabel.text = "Значение счётчика\n\(counter)"
         textView.text.append(contentsOf: "\(formattedDate): Значение изменено на +1\n")
         scrollTextViewToBottom()
+        saveData()
     }
     
     @IBAction private func decreaseCounter(_ sender: Any) {
@@ -60,6 +73,7 @@ final class ViewController: UIViewController {
         }
         scrollTextViewToBottom()
         counterLabel.text = "Значение счётчика\n\(counter)"
+        saveData()
     }
     
     @IBAction private func resetCounter(_ sender: Any) {
@@ -67,8 +81,7 @@ final class ViewController: UIViewController {
         counterLabel.text = "Значение счётчика\n\(counter)"
         textView.text.append(contentsOf: "\(formattedDate): Значение сброшено\n")
         scrollTextViewToBottom()
+        saveData()
     }
-    
-
 }
 
